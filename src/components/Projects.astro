@@ -19,6 +19,14 @@ const TAGS = {
 }
 const PROJECTS = [
   {
+    title: "Star AI — AI Unlocked",
+    description:
+      "Chat con IA gamificado multimodelo: usa energía, gana XP, sube de nivel y cambia entre modos como Fast, Smart, Code o Vision sin salir del mismo flujo. Diseñado para estudiar, escribir, crear, programar y trabajar con contexto visual.",
+    link: "https://aistarapp.netlify.app/",
+    appStore: "https://apps.apple.com/es/app/star-ai-ai-unlocked/id6774253609",
+    image: "/projects/star-ai.png",
+  },
+  {
     title: "FitVerso — Fitness gamificado inspirado en anime",
     description:
       "Aplicación multiplataforma de fitness gamificada en desarrollo que transforma el entrenamiento en una experiencia tipo RPG. Desarrollada con Flutter, Dart y Firebase, incluye sistema de misiones, progresión del usuario, eventos globales y arquitectura escalable.",
@@ -39,11 +47,17 @@ const PROJECTS = [
 
 <div class="flex flex-col gap-y-16">
   {
-    PROJECTS.map(({ image, title, description, tags, link, github }) => (
+    PROJECTS.map(({ image, title, description, tags, link, github, appStore }) => (
     <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
   <div class="w-full md:w-1/2">
     <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
-      <img alt="" class="object-cover object-top w-full h-56 transition duration-500 sm:h-full md:scale-110 md:group-hover:scale-105" loading="lazy" src={image} />
+      {image ? (
+        <img alt={title} class="object-cover object-top w-full h-56 transition duration-500 sm:h-full md:scale-110 md:group-hover:scale-105" loading="lazy" src={image} />
+      ) : (
+        <div class="flex h-56 w-full items-center justify-center bg-gradient-to-br from-gray-950 via-indigo-950 to-yellow-500 p-8 text-center text-3xl font-bold tracking-tight text-white sm:h-full">
+          {title}
+        </div>
+      )}
     </div>
   </div>
 
@@ -65,6 +79,12 @@ const PROJECTS = [
             <LinkButton href={link}>
               <Link class="size-4" />
               Preview
+            </LinkButton>
+          )}
+          {appStore && (
+            <LinkButton href={appStore}>
+              <Link class="size-4" />
+              App Store
             </LinkButton>
           )}
         </footer>
