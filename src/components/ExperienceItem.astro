@@ -10,13 +10,48 @@ interface Props {
   tech?: string[]
 }
 
+interface TechStyle {
+  /** Paradas del degradado de marca (borde, tinte y brillo de la burbuja) */
+  gradient: string[]
+  /** Color del texto en tema claro (contraste >= 4.5:1 sobre el relleno) */
+  ink: string
+  /** Color del texto en tema oscuro (contraste >= 4.5:1 sobre el relleno) */
+  inkDark: string
+}
+
+const TECH_STYLES: Record<string, TechStyle> = {
+  Kotlin: { gradient: ["#7F52FF", "#C811E1", "#E54857"], ink: "#5B21B6", inkDark: "#DDD6FE" },
+  Java: { gradient: ["#F8981D", "#5382A1"], ink: "#9A3412", inkDark: "#FED7AA" },
+  Firebase: { gradient: ["#FFCA28", "#FFA000", "#F57C00"], ink: "#854D0E", inkDark: "#FDE68A" },
+  SAP: { gradient: ["#00B8F1", "#1E5FBF"], ink: "#155E75", inkDark: "#A5F3FC" },
+  Jira: { gradient: ["#2684FF", "#0052CC"], ink: "#1E40AF", inkDark: "#BFDBFE" },
+}
+
+const FALLBACK_TECH_STYLE: TechStyle = {
+  gradient: ["#A1A1AA", "#52525B"],
+  ink: "#3F3F46",
+  inkDark: "#E4E4E7",
+}
+
+// Tailwind no ve clases generadas en tiempo de ejecución: los colores viajan
+// como variables CSS y las clases (estáticas) solo las referencian.
+const techStyle = (name: string) => {
+  const { gradient, ink, inkDark } = TECH_STYLES[name] ?? FALLBACK_TECH_STYLE
+  return [
+    `--chip-gradient: linear-gradient(120deg, ${gradient.join(", ")})`,
+    `--chip-glow: ${gradient[0]}`,
+    `--chip-ink: ${ink}`,
+    `--chip-ink-dark: ${inkDark}`,
+  ].join("; ")
+}
+
 const { title, company, description, link, date, tech } = Astro.props
 ---
 
 <div
-  class="relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-black/20 dark:before:border-white/15 before:content-[''] md:grid-cols-5 md:gap-10 md:space-x-4]"
+  class="relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-black/20 dark:before:border-white/15 before:content-[''] md:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] lg:grid-cols-5 md:gap-10 md:space-x-4]"
 >
-  <div class="relative pb-12 md:col-span-2">
+  <div class="relative pb-12 lg:col-span-2">
     <div class="sticky top-0">
       <span class="text-yellow-400 -left-[42px] absolute rounded-full text-5xl"
         >&bull;</span
@@ -30,11 +65,39 @@ const { title, company, description, link, date, tech } = Astro.props
           <ul
             role="list"
             aria-label="Tecnologías utilizadas"
-            class="flex flex-wrap gap-2 mt-3"
+            class="flex flex-wrap min-[360px]:flex-nowrap gap-1 lg:gap-1.5 mt-3"
           >
             {tech.map((item) => (
-              <li class="px-2.5 py-0.5 text-xs font-medium rounded-full border border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-200">
-                {item}
+              <li
+                style={techStyle(item)}
+                class:list={[
+                  // Borde de 1px con el degradado de marca y halo de su color
+                  "group relative rounded-full p-px",
+                  "bg-[image:var(--chip-gradient)]",
+                  "shadow-[0_1px_8px_-2px_var(--chip-glow)] dark:shadow-[0_0_12px_-3px_var(--chip-glow)]",
+                ]}
+              >
+                <span
+                  class:list={[
+                    "relative block overflow-hidden rounded-full",
+                    "px-1.5 max-[374px]:px-[5px] lg:px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+                    "text-[color:var(--chip-ink)] dark:text-[color:var(--chip-ink-dark)]",
+                    // Relleno translúcido: deja pasar ~20-28% del degradado del borde
+                    "bg-white/[.8] dark:bg-gray-950/[.72]",
+                    // Reflejo superior para un acabado satinado
+                    "bg-[image:linear-gradient(to_bottom,rgba(255,255,255,.75),rgba(255,255,255,0)_55%)]",
+                    "dark:bg-[image:linear-gradient(to_bottom,rgba(255,255,255,.14),rgba(255,255,255,0)_55%)]",
+                    "shadow-[inset_0_1px_0_rgba(255,255,255,.9)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,.12)]",
+                    // Destello diagonal solo al pasar el ratón y sin movimiento reducido
+                    "after:pointer-events-none after:absolute after:inset-y-0 after:-left-full after:w-full after:-skew-x-12",
+                    "after:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent)]",
+                    "dark:after:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent)]",
+                    "motion-safe:group-hover:after:translate-x-[200%]",
+                    "motion-safe:group-hover:after:transition-transform motion-safe:group-hover:after:duration-700",
+                  ]}
+                >
+                  {item}
+                </span>
               </li>
             ))}
           </ul>
@@ -42,7 +105,7 @@ const { title, company, description, link, date, tech } = Astro.props
       }
     </div>
   </div>
-  <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 md:col-span-3">
+  <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 lg:col-span-3">
     {description}
     {
       link && (
