@@ -49,9 +49,9 @@ const { title, company, description, link, date, tech } = Astro.props
 ---
 
 <div
-  class="relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-black/20 dark:before:border-white/15 before:content-[''] md:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] lg:grid-cols-5 md:gap-10 md:space-x-4]"
+  class="relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-black/20 dark:before:border-white/15 before:content-[''] md:grid-cols-5 md:gap-10 md:space-x-4]"
 >
-  <div class="relative pb-12 lg:col-span-2">
+  <div class="relative pb-12 md:col-span-2">
     <div class="sticky top-0">
       <span class="text-yellow-400 -left-[42px] absolute rounded-full text-5xl"
         >&bull;</span
@@ -65,7 +65,7 @@ const { title, company, description, link, date, tech } = Astro.props
           <ul
             role="list"
             aria-label="Tecnologías utilizadas"
-            class="flex flex-wrap min-[360px]:flex-nowrap gap-1 lg:gap-1.5 mt-3"
+            class="flex flex-wrap min-[360px]:flex-nowrap gap-1 md:gap-0.5 lg:gap-1.5 mt-3"
           >
             {tech.map((item) => (
               <li
@@ -80,7 +80,8 @@ const { title, company, description, link, date, tech } = Astro.props
                 <span
                   class:list={[
                     "relative block overflow-hidden rounded-full",
-                    "px-1.5 max-[374px]:px-[5px] lg:px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+                    // En md (768-1023px) la columna izquierda mide ~206px: se compacta el relleno
+                    "px-1.5 max-[374px]:px-[5px] md:px-[3px] lg:px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
                     "text-[color:var(--chip-ink)] dark:text-[color:var(--chip-ink-dark)]",
                     // Relleno translúcido: deja pasar ~20-28% del degradado del borde
                     "bg-white/[.8] dark:bg-gray-950/[.72]",
@@ -105,7 +106,7 @@ const { title, company, description, link, date, tech } = Astro.props
       }
     </div>
   </div>
-  <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 lg:col-span-3">
+  <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 md:col-span-3">
     {description}
     {
       link && (
